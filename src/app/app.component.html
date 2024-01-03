@@ -1,12 +1,12 @@
 <div class="container">
   <div class="content">
     <form action="" [formGroup]="passwordForm">
-      <input type="password" class="password_input" placeholder="Password" name="password" formControlName="password" (input)="checkStrength()">
+      <input type="password" class="password_input" placeholder="Password" name="password" formControlName="password">
     </form>
     <div class="indicator_container">
-      <div class="section" [ngClass]="{ 'wrong': isShort, 'weak': charTypes === 1, 'medium': charTypes === 2, 'strong': charTypes === 3 }"></div>
-      <div class="section" [ngClass]="{ 'wrong': isShort, 'medium': charTypes === 2, 'strong': charTypes === 3 }"></div>
-      <div class="section" [ngClass]="{ 'wrong': isShort, 'strong': charTypes === 3 }"></div>
+      <div class="section" [ngClass]="{ 'wrong': isShort, 'weak': charTypes === PasswordStrength.Weak, 'medium': charTypes === PasswordStrength.Medium, 'strong': charTypes === PasswordStrength.Strong}"></div>
+      <div class="section" [ngClass]="{ 'wrong': isShort, 'medium': charTypes === PasswordStrength.Medium, 'strong': charTypes === PasswordStrength.Strong }"></div>
+      <div class="section" [ngClass]="{ 'wrong': isShort, 'strong': charTypes === PasswordStrength.Strong }"></div>
     </div>
   </div>
 </div>

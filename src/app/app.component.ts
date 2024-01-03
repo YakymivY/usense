@@ -1,16 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
+
+//password strength to charachter types number in string
+enum PasswordStrength {
+  Weak = 1,
+  Medium = 2,
+  Strong = 3
+}
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+
+export class AppComponent implements OnInit {
 
   passwordForm: FormGroup;
   isShort: boolean = false;
   charTypes: number = 0;
+  PasswordStrength = PasswordStrength;
+  private destroy$ = new Subject<void>();
 
   constructor (private fb: FormBuilder) {
     //initializing the form
@@ -19,19 +30,28 @@ export class AppComponent {
     });
   }
 
-  //password getter
-  get passwordValue() {
-    return this.passwordForm.get('password')?.value;
+  ngOnInit(): void {
+    //create subscription
+    this.password?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe( //take until
+      (value) => {
+        this.checkStrength(value);
+      }
+    );
   }
 
-  checkStrength(): void {
+  //password getter
+  get password() {
+    return this.passwordForm.get('password');
+  }
+
+  checkStrength(value: string): void {
     //clearing values
     this.isShort = false;
     this.charTypes = 0;
 
     //matching conditions
-    if (this.passwordValue.length < 8 && this.passwordValue.length != 0) this.isShort = true;
-    else this.charTypes = this.checkContent(this.passwordValue);
+    if (value.length < 8 && value.length != 0) this.isShort = true;
+    else this.charTypes = this.checkContent(value);
   }
 
   checkContent(str: string): number {
@@ -49,6 +69,12 @@ export class AppComponent {
       count++;
     }
     return count;
+  }
+
+  //unsubscribe
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 }
